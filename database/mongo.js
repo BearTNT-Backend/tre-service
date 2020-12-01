@@ -40,6 +40,12 @@ let saveMany = (data) => {
     });
 };
 
+let insert = (data) => {
+  return Listing.create(data).then(() => {
+    return 'Success!';
+  })
+}
+
 let returnListing = (id, cb) => {
   Listing.find({sharedId: id})
     .then( data => {

@@ -19,6 +19,17 @@ app.get('/carousel-module/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
+// CRUD ===================================================================
+
+app.post('/api/carousel-module/photos/', (req, res) => {
+  let listing = req.body.listing;
+  db.insert(listing).then((results) => {
+    console.log(results);
+  }).catch((err) => {
+    console.error(err);
+  })
+});
+
 app.get('/api/carousel-module/photos/:id', (req, res) => {
   console.log('IN THE GET REQUEST');
 
@@ -36,6 +47,11 @@ app.put('/api/carousel-module/photos', (req, res) => {
   console.log('IN THE PUT REQ');
   res.send('Got a PUT request');
 });
+
+app.delete('/api/carousel-module/photos', (req, res) => {
+
+});
+
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
