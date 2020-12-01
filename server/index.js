@@ -27,7 +27,7 @@ app.post('/api/carousel-module/photos/', (req, res) => {
     console.log(results);
   }).catch((err) => {
     console.error(err);
-  })
+  });
 });
 
 app.get('/api/carousel-module/photos/:id', (req, res) => {

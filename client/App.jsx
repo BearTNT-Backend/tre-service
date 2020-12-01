@@ -46,7 +46,7 @@ class App extends React.Component {
   }
 
   toggleMinGrid (e, state) {
-    console.log('mingrid toddde')
+    console.log('mingrid toddde');
     this.setState({
       modal: state,
       modalPhoto: this.state.listing.photos[0]
