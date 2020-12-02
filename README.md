@@ -1,32 +1,20 @@
-# Project Name
+# BearTnT - System Design Capstone
 
-> Project description
-
-## Related Projects
-
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
 
 ## Table of Contents
 
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
+1. [CRUD API](#CRUD API)
+2. [Installation](#Installing Dependencies)
 
-## Usage
+## CRUD API
 
-> Some usage instructions
-
-## Requirements
-
-An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
-
-- Node 6.13.0
-- etc
-
-## Development
+*The below URL's should be prefixed with /api*
+Action | Method | URL
+-------|--------|-----
+Create a new listing | POST | /carousel-module/photos/
+Get listing information for the carousel | GET | /carousel-module/photos/:id
+Update listing information for the carousel | PUT | /carousel-module/photos/:id
+Delete a listing | DELETE | /carousel-module/photos/:id
 
 ### Installing Dependencies
 
