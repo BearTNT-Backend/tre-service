@@ -19,6 +19,20 @@ app.get('/carousel-module/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
+// CRUD ===================================================================
+
+app.post('/api/carousel-module/photos/', (req, res) => {
+  let listing = req.body;
+  console.log(req.body);
+  db.insert(listing).then((results) => {
+    console.log(results);
+    res.send('Success');
+  }).catch((err) => {
+    console.error(err);
+    res.sendStatus(500);
+  });
+});
+
 app.get('/api/carousel-module/photos/:id', (req, res) => {
   console.log('IN THE GET REQUEST');
 
@@ -32,10 +46,25 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
 
 });
 
-app.put('/api/carousel-module/photos', (req, res) => {
-  console.log('IN THE PUT REQ');
-  res.send('Got a PUT request');
+app.put('/api/carousel-module/photos/:id', (req, res) => {
+  let newData = req.body;
+  db.updateListing(req.params.id, newData).then(() => {
+    res.send('Completed PUT request');
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send(err);
+  });
 });
+
+app.delete('/api/carousel-module/photos/:id', (req, res) => {
+  db.removeListing(req.params.id).then((results) => {
+    res.send(results);
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send(err);
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

@@ -26,18 +26,29 @@ const listingsSchema = new mongoose.Schema({
 let Listing = mongoose.model('Listing', listingsSchema);
 
 let saveMany = (data) => {
-  Listing.remove({}, function(err) {
-    console.log('old listing collection removed');
+  Listing.remove({}, () => {
+    Listing.insertMany(data)
+      .then(()=>{
+        console.log('DATA ADDED SUCCESSFULLY');
+        console.log(data);
+      })
+      .catch((error)=>{
+        console.log(error);
+      });
   });
+};
 
-  Listing.insertMany(data)
-    .then(()=>{
-      console.log('DATA ADDED SUCCESSFULLY');
-      console.log(data);
-    })
-    .catch((error)=>{
-      console.log(error);
-    });
+let removeListing = (id) => {
+  return Listing.deleteOne({sharedId: id}).then(() => {
+    return 'Successfully removed listing.';
+  });
+};
+
+let insert = (data) => {
+  return Listing.create(data).then(() => {
+    console.log(JSON.stringify(data));
+    return 'Success!';
+  });
 };
 
 let returnListing = (id, cb) => {
@@ -52,5 +63,14 @@ let returnListing = (id, cb) => {
 
 };
 
+let updateListing = (id, newData) => {
+  return Listing.update({sharedId: id}, newData).then((err, numAffected) => {
+    return numAffected;
+  });
+};
+
 module.exports.saveMany = saveMany;
 module.exports.returnListing = returnListing;
+module.exports.insert = insert;
+module.exports.updateListing = updateListing;
+module.exports.removeListing = removeListing;
