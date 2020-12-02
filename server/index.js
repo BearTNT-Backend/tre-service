@@ -29,6 +29,7 @@ app.post('/api/carousel-module/photos/', (req, res) => {
     res.send('Success');
   }).catch((err) => {
     console.error(err);
+    res.sendStatus(500);
   });
 });
 
@@ -46,8 +47,13 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
 });
 
 app.put('/api/carousel-module/photos/:id', (req, res) => {
-  console.log('IN THE PUT REQ');
-  res.send('Got a PUT request');
+  let newData = req.body;
+  db.updateListing(req.params.id, newData).then(() => {
+    res.send('Completed PUT request');
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send(err);
+  });
 });
 
 app.delete('/api/carousel-module/photos', (req, res) => {
