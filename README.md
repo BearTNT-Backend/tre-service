@@ -1,10 +1,9 @@
 # BearTnT - System Design Capstone
 
-
 ## Table of Contents
 
-1. [CRUD API](#CRUD API)
-2. [Installation](#Installing Dependencies)
+1. [CRUD API](#CRUD)
+2. [Installation](#Installing)
 
 ## CRUD API
 
@@ -16,7 +15,7 @@ Get listing information for the carousel | GET | /carousel-module/photos/:id
 Update listing information for the carousel | PUT | /carousel-module/photos/:id
 Delete a listing | DELETE | /carousel-module/photos/:id
 
-### Installing Dependencies
+## Installing Dependencies
 
 From within the root directory:
 
