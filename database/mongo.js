@@ -59,6 +59,13 @@ let returnListing = (id, cb) => {
 
 };
 
+let updateListing = (id, newData) => {
+  return Listing.update({sharedId: id}, newData).then((err, numAffected) => {
+    return numAffected;
+  });
+};
+
 module.exports.saveMany = saveMany;
 module.exports.returnListing = returnListing;
 module.exports.insert = insert;
+module.exports.updateListing = updateListing;
