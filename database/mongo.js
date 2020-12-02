@@ -39,7 +39,7 @@ let saveMany = (data) => {
 };
 
 let removeListing = (id) => {
-  return Listing.remove({sharedId: id}).then(() => {
+  return Listing.deleteOne({sharedId: id}).then(() => {
     return 'Successfully removed listing.';
   });
 };

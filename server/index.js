@@ -56,8 +56,13 @@ app.put('/api/carousel-module/photos/:id', (req, res) => {
   });
 });
 
-app.delete('/api/carousel-module/photos', (req, res) => {
-
+app.delete('/api/carousel-module/photos/:id', (req, res) => {
+  db.removeListing(req.params.id).then((results) => {
+    res.send(results);
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send(err);
+  });
 });
 
 
