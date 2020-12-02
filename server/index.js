@@ -22,9 +22,11 @@ app.get('/carousel-module/*', (req, res) => {
 // CRUD ===================================================================
 
 app.post('/api/carousel-module/photos/', (req, res) => {
-  let listing = req.body.listing;
+  let listing = req.body;
+  console.log(req.body);
   db.insert(listing).then((results) => {
     console.log(results);
+    res.send('Success');
   }).catch((err) => {
     console.error(err);
   });
@@ -43,7 +45,7 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
 
 });
 
-app.put('/api/carousel-module/photos', (req, res) => {
+app.put('/api/carousel-module/photos/:id', (req, res) => {
   console.log('IN THE PUT REQ');
   res.send('Got a PUT request');
 });

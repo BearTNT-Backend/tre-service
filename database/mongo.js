@@ -42,6 +42,7 @@ let saveMany = (data) => {
 
 let insert = (data) => {
   return Listing.create(data).then(() => {
+    console.log(JSON.stringify(data));
     return 'Success!';
   });
 };
@@ -60,3 +61,4 @@ let returnListing = (id, cb) => {
 
 module.exports.saveMany = saveMany;
 module.exports.returnListing = returnListing;
+module.exports.insert = insert;
