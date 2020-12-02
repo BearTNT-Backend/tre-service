@@ -26,18 +26,22 @@ const listingsSchema = new mongoose.Schema({
 let Listing = mongoose.model('Listing', listingsSchema);
 
 let saveMany = (data) => {
-  Listing.remove({}, function(err) {
-    console.log('old listing collection removed');
+  Listing.remove({}, () => {
+    Listing.insertMany(data)
+      .then(()=>{
+        console.log('DATA ADDED SUCCESSFULLY');
+        console.log(data);
+      })
+      .catch((error)=>{
+        console.log(error);
+      });
   });
+};
 
-  Listing.insertMany(data)
-    .then(()=>{
-      console.log('DATA ADDED SUCCESSFULLY');
-      console.log(data);
-    })
-    .catch((error)=>{
-      console.log(error);
-    });
+let removeListing = (id) => {
+  return Listing.remove({sharedId: id}).then(() => {
+    return 'Successfully removed listing.';
+  });
 };
 
 let insert = (data) => {
@@ -69,3 +73,4 @@ module.exports.saveMany = saveMany;
 module.exports.returnListing = returnListing;
 module.exports.insert = insert;
 module.exports.updateListing = updateListing;
+module.exports.removeListing = removeListing;
