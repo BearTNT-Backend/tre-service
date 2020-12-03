@@ -60,7 +60,7 @@ module.exports = {
       console.error(error);
       return error;
     }
-    console.log('If you can see this, press CTRL + C to exit.');
+    setTimeout(() => client.shutdown, 2000);
     return 'Success!';
   },
 };
