@@ -1,12 +1,9 @@
 // to run a mongo file, from the shell execute "mongo < FILENAME.js"
 const mongoose = require('mongoose');
+
 const mongoDB = 'mongodb://localhost/photo-carousel'; // setting up a photo-carousel db
 
-
-
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
-
-const db = mongoose.connection;
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const listingsSchema = new mongoose.Schema({
   sharedId: Number,
@@ -18,56 +15,46 @@ const listingsSchema = new mongoose.Schema({
     {
       description: String,
       url: String,
-      photoId: Number
-    }
-  ]
+      photoId: Number,
+    },
+  ],
 });
 
-let Listing = mongoose.model('Listing', listingsSchema);
+const Listing = mongoose.model('Listing', listingsSchema);
 
-let saveMany = (data) => {
+const saveMany = (data) => {
   Listing.remove({}, () => {
     Listing.insertMany(data)
-      .then(()=>{
+      .then(() => {
         console.log('DATA ADDED SUCCESSFULLY');
         console.log(data);
       })
-      .catch((error)=>{
+      .catch((error) => {
         console.log(error);
       });
   });
 };
 
-let removeListing = (id) => {
-  return Listing.deleteOne({sharedId: id}).then(() => {
-    return 'Successfully removed listing.';
-  });
-};
+const removeListing = (id) => Listing.deleteOne({ sharedId: id }).then(() => 'Successfully removed listing.');
 
-let insert = (data) => {
-  return Listing.create(data).then(() => {
-    console.log(JSON.stringify(data));
-    return 'Success!';
-  });
-};
+const insert = (data) => Listing.create(data).then(() => {
+  console.log(JSON.stringify(data));
+  return 'Success!';
+});
 
-let returnListing = (id, cb) => {
-  Listing.find({sharedId: id})
-    .then( data => {
+const returnListing = (id, cb) => {
+  Listing.find({ sharedId: id })
+    .then((data) => {
       console.log('THIS IS THE DATA FROM returnListing:', data);
       cb(data);
     })
-    .catch( err => {
+    .catch((err) => {
       console.log('err found:', err);
     });
-
 };
 
-let updateListing = (id, newData) => {
-  return Listing.update({sharedId: id}, newData).then((err, numAffected) => {
-    return numAffected;
-  });
-};
+const updateListing = (id, newData) => Listing.update({ sharedId: id }, newData)
+  .then((err, numAffected) => numAffected);
 
 module.exports.saveMany = saveMany;
 module.exports.returnListing = returnListing;

@@ -1,7 +1,7 @@
 // write my data creator here
 // const mongoose = require('mongoose');
 const faker = require('faker');
-const db = require('./mongo.js');
+const db = require('./cassandra.js');
 
 // random number between two values
 const getRandomNum = (min, max) => {
@@ -61,14 +61,14 @@ const randomPhotoGrouper = (x) => {
   // create a result array of photos and descriptions
   const photoGroup = [];
   let i = 0;
-  // var id = 1;
+  let id = 1;
   while (i < x) {
     const index = getRandomNum(0, photos.length);
     const photoObj = photos[index];
-    // photoObj.photoId = id;
+    photoObj.photoId = id;
     photoGroup.push(photoObj);
     i += 1;
-    // id++;
+    id += 1;
   }
   return photoGroup;
 };
