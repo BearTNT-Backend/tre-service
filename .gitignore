@@ -28,3 +28,4 @@ bundle.js
 *.pem
 login.sh
 
+config.json
