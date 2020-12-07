@@ -8,7 +8,7 @@
     "node": ">=6.13.0"
   },
   "scripts": {
-    "seed": "node database/seed.js",
+    "seed": "node --max-old-space-size=8192 database/seed.js ",
     "start": "nodemon ./server/index.js",
     "build": "webpack -d –-watch",
     "start:pm2": "pm2 start server/index.js",
@@ -29,6 +29,7 @@
     "body-parser": "^1.19.0",
     "cassandra-driver": "^4.6.1",
     "csv-parser": "^3.0.0",
+    "csv-write-stream": "^2.0.0",
     "eslint": "^7.14.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",

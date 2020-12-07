@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // const { Client } = require('pg');
 const pgp = require('pg-promise')();
 const csv = require('csv-parser');
@@ -46,7 +47,7 @@ module.exports = {
       await client.any(query);
       const usedListings = {};
       fs.createReadStream(path.resolve(__dirname, './data.csv'))
-        .pipe(csv())
+        .pipe(csv({ separator: '|' }))
         .on('data', async (listing) => {
           if (usedListings[listing.sharedId] !== true) {
             usedListings[listing.sharedId] = true;

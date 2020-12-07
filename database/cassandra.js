@@ -9,6 +9,10 @@ const dataCenter = 'datacenter1';
 const client = new cassandra.Client({
   contactPoints,
   localDataCenter: dataCenter,
+  pooling: {
+    maxRequestsPerConnection: 1000000000000,
+  },
+  socketOptions: { readTimeout: 0 },
 });
 module.exports = {
   returnListing: () => client.connect().then(() => (`Connected to ${client.hosts.length} nodes in the cluster: ${client.hosts.keys().join(',')}`)),
@@ -63,7 +67,6 @@ module.exports = {
       console.error(error);
       return error;
     }
-    setTimeout(() => client.shutdown(), 2000);
     return 'Success!';
   },
   load: () => {
@@ -87,12 +90,6 @@ module.exports = {
           PRIMARY KEY (sharedId, photoId)
         ) WITH CLUSTERING ORDER BY (photoId DESC);`,
       },
-      {
-        query: `COPY listingphotos.listing
-        FROM 'data.csv'
-        WITH DELIMITER = ','
-          AND HEADER = TRUE;`,
-      },
     ];
     (async () => {
       try {
@@ -100,17 +97,16 @@ module.exports = {
         await client.execute(setupQueries[1].query);
         await client.execute(setupQueries[2].query);
         fs.createReadStream(path.resolve(__dirname, './data.csv'))
-          .pipe(csv())
+          .pipe(csv({ separator: '|' }))
           .on('data', (listing) => {
-            console.log(listing);
             const query = `INSERT INTO listingphotos.listing (sharedId, name, rating, reviews, location, photoId, description, url)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
             (async () => {
               try {
-                const params = [listing.sharedId, listing.name, listing.rating,
-                  listing.reviews, listing.location, listing.photoId,
-                  listing.description, listing.url];
-                await client.execute(query, params, { prepare: true });
+                // const params = [listing.sharedId, listing.name, listing.rating,
+                //   listing.reviews, listing.location, listing.photoId,
+                //   listing.description, listing.url];
+                await client.execute(query, listing, { prepare: true });
               } catch (error) {
                 console.error(error);
               }

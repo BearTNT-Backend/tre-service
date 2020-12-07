@@ -27,5 +27,5 @@ bundle.js
 # Key files
 *.pem
 login.sh
-
+data.csv
 config.json
