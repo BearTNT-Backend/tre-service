@@ -37,8 +37,20 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
   const { id } = req.params;
 
   db.returnListing(id).then((x) => {
-    const data = x;
-    res.send(data);
+    const photos = x.rows.map((row) => ({
+      description: row.description,
+      url: row.url,
+      photoId: row.photoid,
+    }));
+    const listing = {
+      sharedId: x.rows[0].sharedId,
+      name: x.rows[0].name,
+      rating: x.rows[0].rating,
+      reviews: x.rows[0].reviews,
+      location: x.rows[0].location,
+      photos,
+    };
+    res.send([listing]);
   }).catch((err) => {
     console.error(err);
     res.status(500).send(err);
@@ -47,7 +59,7 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
 
 app.put('/api/carousel-module/photos/:id', (req, res) => {
   const newData = req.body;
-  db.updateListing(req.params.id, newData).then(() => {
+  db.updateListingPhoto(req.params.id, req.params.photo.id, newData).then(() => {
     res.send('Completed PUT request');
   }).catch((err) => {
     console.error(err);
@@ -56,7 +68,7 @@ app.put('/api/carousel-module/photos/:id', (req, res) => {
 });
 
 app.delete('/api/carousel-module/photos/:id', (req, res) => {
-  db.removeListing(req.params.id).then((results) => {
+  db.removeListingPhoto(req.params.id, req.params.photo.id).then((results) => {
     res.send(results);
   }).catch((err) => {
     console.error(err);

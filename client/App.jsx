@@ -81,6 +81,7 @@ class App extends React.Component {
 
     axios.get(`/api/carousel-module/photos/${id}`)
       .then(res => {
+        console.log(res.data);
         console.log(res.data[0]);
         var photos = res.data[0].photos;
         var photoId = 1;

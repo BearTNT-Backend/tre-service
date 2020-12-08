@@ -1,8 +1,5 @@
 /* eslint-disable no-console */
 const cassandra = require('cassandra-driver');
-const csv = require('csv-parser');
-const fs = require('fs');
-const path = require('path');
 
 const contactPoints = ['127.0.0.1:9042'];
 const dataCenter = 'datacenter1';
@@ -15,110 +12,33 @@ const client = new cassandra.Client({
   socketOptions: { readTimeout: 0 },
 });
 module.exports = {
-  returnListing: () => client.connect().then(() => (`Connected to ${client.hosts.length} nodes in the cluster: ${client.hosts.keys().join(',')}`)),
-  saveMany: async (data) => {
-    try {
-      const setupQueries = [
-        {
-          query: 'DROP KEYSPACE IF EXISTS listingphotos',
-        },
-        {
-          query: 'CREATE KEYSPACE listingphotos WITH REPLICATION = {\'class\':\'SimpleStrategy\', \'replication_factor\':1}',
-        },
-        {
-          query: `CREATE TABLE listingphotos.listing (
-            sharedId int,
-            name text,
-            rating float,
-            reviews int,
-            location text,
-            photoId int,
-            description text,
-            url text,
-            PRIMARY KEY (sharedId, photoId)
-          ) WITH CLUSTERING ORDER BY (photoId DESC);`,
-        },
-      ];
-      try {
-        await client.execute(setupQueries[0].query);
-        await client.execute(setupQueries[1].query);
-        await client.execute(setupQueries[2].query);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await data.forEach(async (listing) => {
-          await listing.photos.forEach(async (photo) => {
-            const query = `INSERT INTO listingphotos.listing (sharedId, name, rating, reviews, location, photoId, description, url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            try {
-              const params = [listing.sharedId, listing.name, listing.rating,
-                listing.reviews, listing.location, photo.photoId, photo.description, photo.url];
-              await client.execute(query, params, { prepare: true });
-            } catch (error) {
-              console.error(error);
-            }
-          });
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    } catch (error) {
-      console.error(error);
-      return error;
-    }
-    return 'Success!';
-  },
-  load: () => {
-    const setupQueries = [
-      {
-        query: 'DROP KEYSPACE IF EXISTS listingphotos',
-      },
-      {
-        query: 'CREATE KEYSPACE listingphotos WITH REPLICATION = {\'class\':\'SimpleStrategy\', \'replication_factor\':1}',
-      },
-      {
-        query: `CREATE TABLE listingphotos.listing (
-          sharedId int,
-          name text,
-          rating float,
-          reviews int,
-          location text,
-          photoId int,
-          description text,
-          url text,
-          PRIMARY KEY (sharedId, photoId)
-        ) WITH CLUSTERING ORDER BY (photoId DESC);`,
-      },
-    ];
-    (async () => {
-      try {
-        await client.execute(setupQueries[0].query);
-        await client.execute(setupQueries[1].query);
-        await client.execute(setupQueries[2].query);
-        fs.createReadStream(path.resolve(__dirname, './data.csv'))
-          .pipe(csv({ separator: '|' }))
-          .on('data', (listing) => {
-            const query = `INSERT INTO listingphotos.listing (sharedId, name, rating, reviews, location, photoId, description, url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            (async () => {
-              try {
-                // const params = [listing.sharedId, listing.name, listing.rating,
-                //   listing.reviews, listing.location, listing.photoId,
-                //   listing.description, listing.url];
-                await client.execute(query, listing, { prepare: true });
-              } catch (error) {
-                console.error(error);
-              }
-            })();
-          })
-          .on('end', () => {
-            console.log('CSV file successfully processed');
-          });
-        console.log('Success.');
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  },
+
+  returnListing: (id) => client.connect()
+    .then(() => {
+      console.log(`Connected to ${client.hosts.length} nodes in the cluster: ${client.hosts.keys().join(',')}`);
+      const query = 'SELECT * FROM listingphotos.listing WHERE sharedId = ?';
+      console.log(id);
+      return client.execute(query, [id], { prepare: true });
+    }),
+
+  updateListingPhoto: (id, photoid, newData) => client.connect()
+    .then(() => {
+      const query = 'UPDATE listingphotos.listing SET ? = ? WHERE sharedId = ?';
+      return client.execute(query, [Object.keys(newData)[0],
+        Object.values(newData)[0], id, photoid]);
+    }),
+
+  removeListingPhoto: (id, photoid) => client.connect()
+    .then(() => {
+      const query = 'DELETE FROM listingphotos.listing WHERE sharedid=? AND photoid=?';
+      return client.execute(query, [id, photoid]);
+    }),
+
+  addPhoto: (listing, photo) => client.connect()
+    .then(() => {
+      const query = 'INSERT INTO listingphotos.listing(sharedId, photoId, description, location, name, rating, reviews, url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+      return client.execute(query, [listing.sharedId, photo.photoId, listing.description,
+        listing.location, listing.name, listing.rating, listing.reviews, listing.url]);
+    }),
+
 };
