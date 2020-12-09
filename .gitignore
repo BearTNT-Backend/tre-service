@@ -29,3 +29,4 @@ bundle.js
 login.sh
 data.csv
 config.json
+newrelic.js

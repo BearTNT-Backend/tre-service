@@ -1,5 +1,5 @@
 console.log('In the server file');
-
+require('newrelic');
 const express = require('express');
 
 const app = express();
