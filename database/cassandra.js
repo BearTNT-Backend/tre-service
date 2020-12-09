@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 const cassandra = require('cassandra-driver');
+require('dotenv').config({ path: '../config.env' });
 
-const contactPoints = ['127.0.0.1:9042'];
+const contactPoints = [process.env.DB_URL];
 const dataCenter = 'datacenter1';
 const client = new cassandra.Client({
   contactPoints,
