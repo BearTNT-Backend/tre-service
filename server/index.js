@@ -16,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/carousel-module/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
+app.get('/loaderio-*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, `../${process.env.LOADERIO_FILENAME}.txt`));
+});
 
 // CRUD ===================================================================
 
