@@ -1,6 +1,7 @@
 console.log('In the server file');
 require('newrelic');
 const express = require('express');
+const redis = require('redis');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -8,6 +9,7 @@ const path = require('path');
 const db = require('../database/cassandra.js');
 
 const port = 3003;
+const redisClient = redis.createClient({host: '18.205.18.126', port: 6379, password: '^EHp8DIYc2' });
 
 app.use(express.static(`${__dirname}/../client/dist`));
 app.use(bodyParser.json());
@@ -22,6 +24,23 @@ app.get('/loaderio-*', (req, res) => {
 
 // CRUD ===================================================================
 
+const checkCache = (req, res, next) => {
+  const { id } = req.params;
+
+  redisClient.get(id, (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send(err);
+    }
+
+    if (data != null) {
+      res.send([JSON.parse(data)]);
+    } else {
+      next();
+    }
+  });
+};
+
 app.post('/api/carousel-module/photos/', (req, res) => {
   const listing = req.body;
   console.log(req.body);
@@ -34,7 +53,7 @@ app.post('/api/carousel-module/photos/', (req, res) => {
   });
 });
 
-app.get('/api/carousel-module/photos/:id', (req, res) => {
+app.get('/api/carousel-module/photos/:id', checkCache, (req, res) => {
   console.log('IN THE GET REQUEST');
 
   const { id } = req.params;
@@ -53,6 +72,7 @@ app.get('/api/carousel-module/photos/:id', (req, res) => {
       location: x.rows[0].location,
       photos,
     };
+    redisClient.setex(id, 3600, JSON.stringify(listing));
     res.send([listing]);
   }).catch((err) => {
     console.error(err);
