@@ -1,8 +1,7 @@
 import React from 'react';
 import styles from './css/Header.css';
 
-const Header = (props) => {
-  return (
+const Header = (props) => (
     <div className={styles.asbar}>
       <div className={styles.asheader}>
         <div className={styles.astopbar}>
@@ -18,7 +17,7 @@ const Header = (props) => {
             <div className={styles.asrating}>
               {props.listing.rating = 5 ? '5.0' : props.listing.rating}
             </div>
-            <div className={styles.asrevtotal}>{'(' + props.listing.reviews + ')'}</div>
+            <div className={styles.asrevtotal}>{`(${props.listing.reviews})`}</div>
           </div>
 
           <div className={styles.asspacer}>·</div>
@@ -41,8 +40,6 @@ const Header = (props) => {
         </div>
       </div>
     </div>
-  );
-
-};
+);
 
 export default Header;

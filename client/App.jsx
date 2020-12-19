@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import styles from './App.css';
 import Modal from 'react-modal';
+import styles from './App.css';
 import MainGrid from './components/MainGrid.jsx';
 import PhotosModal from './components/modal/PhotosModal.jsx';
 import Header from './components/Header.jsx';
@@ -15,14 +15,14 @@ import MinGrid from './minComponents/MinGrid.jsx';
 Modal.setAppElement(document.getElementById('app'));
 
 class App extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       data: [],
       listing: {},
       modal: false,
       modalPhoto: null,
-      windowWidth: window.innerWidth
+      windowWidth: window.innerWidth,
     };
 
     this.toggleModal = this.toggleModal.bind(this);
@@ -30,12 +30,10 @@ class App extends React.Component {
     this.toggleMinGrid = this.toggleMinGrid.bind(this);
   }
 
-  toggleModal (e, state, photo) {
-    e.preventDefault();
-
+  toggleModal(e, state, photo) {
     this.setState({
       modal: state,
-      modalPhoto: photo || null
+      modalPhoto: photo || null,
     });
 
     if (state) {
@@ -45,22 +43,20 @@ class App extends React.Component {
     }
   }
 
-  toggleMinGrid (e, state) {
+  toggleMinGrid(e, state) {
     console.log('mingrid toddde');
     this.setState({
       modal: state,
-      modalPhoto: this.state.listing.photos[0]
+      modalPhoto: this.state.listing.photos[0],
     });
   }
 
-
-
-  handleResize (e) {
+  handleResize(e) {
     // console.log('handling resize...');
     this.setState({ windowWidth: window.innerWidth });
     if (this.state.modal === false && window.innerWidth > 743) {
       document.getElementsByClassName('overlay')[0].classList.remove(styles.hidden);
-    } else if ( this.state.modal === true && window.innerWidth > 743) {
+    } else if (this.state.modal === true && window.innerWidth > 743) {
       document.getElementsByClassName('overlay')[0].classList.add(styles.hidden);
     }
     // console.log(this.state.windowWidth);
@@ -73,40 +69,39 @@ class App extends React.Component {
   componentDidMount() {
     console.log('mounting component');
 
-    window.addEventListener( 'resize', this.handleResize);
+    window.addEventListener('resize', this.handleResize);
 
-
-    var pathArr = window.location.pathname.split('/');
-    var id = pathArr[pathArr.length - 1];
+    const pathArr = window.location.pathname.split('/');
+    const id = pathArr[pathArr.length - 1];
 
     axios.get(`/api/carousel-module/photos/${id}`)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         console.log(res.data[0]);
-        var photos = res.data[0].photos;
-        var photoId = 1;
-        for (var i = 0; i < photos.length; i ++) {
+        const { photos } = res.data[0];
+        let photoId = 1;
+        for (let i = 0; i < photos.length; i++) {
           photos[i].photoId = photoId;
           photoId++;
         }
 
         this.setState({
           data: res,
-          listing: res.data[0]
+          listing: res.data[0],
         });
         console.log(this.state.listing);
       })
-      .catch (err => {
+      .catch((err) => {
         console.log('ERROR');
       });
   }
 
-  render () {
+  render() {
     if (this.state.data.length === 0) {
       return (
         <div></div>
       );
-    } else if (this.state.windowWidth > 743 || this.state.modal === true && this.state.windowWidth > 743) {
+    } if (this.state.windowWidth > 743 || this.state.modal === true && this.state.windowWidth > 743) {
       return (
         <div className={styles.asmodule}>
           <Header listing={this.state.listing}/>
@@ -118,7 +113,7 @@ class App extends React.Component {
           <MainGrid toggleModal={this.toggleModal} data={this.state.data} modal={this.state.modal}/>
         </div>
       );
-    } else if (this.state.windowWidth <= 743 && this.state.modal === false) {
+    } if (this.state.windowWidth <= 743 && this.state.modal === false) {
       return (
         <div className={styles.asmodule}>
           <TopBar listing={this.state.listing}/>
@@ -126,7 +121,7 @@ class App extends React.Component {
           <Description listing={this.state.listing}/>
         </div>
       );
-    } else if (this.state.windowWidth <= 743 && this.state.modal === true) {
+    } if (this.state.windowWidth <= 743 && this.state.modal === true) {
       return (
         <MinGrid data={this.state.data} toggleMinGrid={this.toggleMinGrid}/>
       );
